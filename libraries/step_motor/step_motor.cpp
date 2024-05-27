@@ -1,11 +1,20 @@
 #include "step_motor.hpp"
 #include "Arduino.h"
 
-Step_motor::Step_motor()
+// 1 STEP == 0.9 DEGREE
+
+Step_motor::Step_motor(const uint8_t& PUL = 2,
+                       const uint8_t& DIR = 3,
+                       const uint8_t& ENA = 4)
 {
-  pinMode (PUL, OUTPUT);
-  pinMode (DIR, OUTPUT);
-  pinMode (ENA, OUTPUT);
+  pinMode(PUL, OUTPUT);
+  pinMode(DIR, OUTPUT);
+  pinMode(ENA, OUTPUT);
+}
+
+void Step_motor::setDirection(const bool& new_direction)
+{
+  direction = new_direction;
 }
 
 void Step_motor::setDelay(const uint16_t& new_delay)
@@ -16,19 +25,22 @@ void Step_motor::setStep(const uint32_t& new_step)
 {
   step = new_step;
 }
-void Step_motor::ScrollTo(const uint16_t& degree) const
+
+double Step_motor::ScrollTo(const uint16_t& steps) const
 {
-  for (int i=0; i < (step * degree / 360) + 1; i++)
+  for (int i=0; i < steps; i++)
   {
-    digitalWrite(DIR,LOW);
-    digitalWrite(ENA,HIGH);
-    digitalWrite(PUL,HIGH);
-    delayMicroseconds(delay);
-    digitalWrite(PUL,LOW);
-    delayMicroseconds(delay);
+    digitalWrite(DIR, direction);
+    digitalWrite(ENA, HIGH);
+    digitalWrite(PUL, HIGH);
+    delayMicroseconds(delay_time);
+    digitalWrite(PUL, LOW);
+    delayMicroseconds(delay_time);
   }
+  return 0.9 * steps * step / 400;
 }
+
 void Step_motor::ScrollToFullRound() const
 {
-  ScrollTo(360);
+  ScrollTo(400 * step);
 }

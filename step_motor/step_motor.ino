@@ -4,15 +4,12 @@
 
 void setup()
 {
-
+  motor.setStep(12800);
 }
  
 void loop()
 {
-  for (int i = 0; i < 360; i++)
-  {
-    motor.ScrollTo(1);
-    //delay(200);
-  }
-  delay(10000);
+  motor.ScrollTo(12800);
+  //delay(200);
+  delay(5000);
 }
