@@ -1,18 +1,25 @@
+int PUL=4;
+int DIR=3;
+int ENA=2;
+  
 void setup() {
-  // Инициализация серийного порта с частотой передачи данных 9600 бит/сек
-  Serial.begin(9600);
+  pinMode (PUL, OUTPUT);
+  pinMode (DIR, OUTPUT);
+  pinMode (ENA, OUTPUT);
+ 
 }
-
+ 
 void loop() {
-  static unsigned long lastIterationTime = 0; // Переменная для хранения времени последней итерации
-  unsigned long currentTime = millis(); // Получение текущего времени в миллисекундах
+  for (int i=0; i<6400*2; i++)
+  {
+    digitalWrite(DIR,LOW);
+    digitalWrite(ENA,HIGH);
+    digitalWrite(PUL,HIGH);
+    delayMicroseconds(50*4);
+    digitalWrite(PUL,LOW);
+    delayMicroseconds(50);
+  }
+  delay(4000);
+    //delayMicroseconds(50);
 
-  // Вычисляем количество прошедших секунд с момента запуска программы
-  unsigned long elapsedTime = currentTime - lastIterationTime;
-  lastIterationTime = currentTime; // Обновляем время последней итерации
-
-  // Выводим количество прошедших секунд в серийный порт
-  Serial.println(elapsedTime / 1000); // Делим на 1000, чтобы получить количество секунд
-
-  delay(1000); // Задержка в 1 секунду между выводами
 }
