@@ -88,6 +88,16 @@ void keyboard(unsigned char key, int x, int y) {
     glutPostRedisplay();
 }
 
+void pushScanerData(double h, double r, double degree)
+{
+    double z = h;
+    double y = r * std::cos(degree);
+    double x = r * std::sin(degree);
+    points.push_back(x);
+    points.push_back(z);
+    points.push_back(y);
+}
+
 int main(int argc, char **argv)
 {
     points.push_back(0);
@@ -106,23 +116,27 @@ int main(int argc, char **argv)
     points.push_back(0);
     points.push_back(1);
 
-    for (double i = -2; i < 2; i+=0.05)
+    // for (double i = -2; i < 2; i+=0.05)
+    // {
+    //     for (double j = -2; j < 2; j+=0.05)
+    //     {
+    //         for (double l = 0; l < 2; l+=0.05)
+    //         {
+    //             //if (std::sqrt((i * i + j * j)) + 0.01 > l && std::sqrt((i * i + j * j)) - 0.01 < l)
+    //             double r = 2; 
+    //             if (i < r && j < r && l < r && i > -r && j > -r && l > -r)
+    //             {
+    //                 //std::cout << i << " " << j << "\n";
+    //                 points.push_back(i);
+    //                 points.push_back(-l + 2);
+    //                 points.push_back(j);
+    //             }
+    //         }
+    //     }
+    // }
+    for (double i = 0; i < 360; i += 0.9)
     {
-        for (double j = -2; j < 2; j+=0.05)
-        {
-            for (double l = 0; l < 2; l+=0.05)
-            {
-                //if (std::sqrt((i * i + j * j)) + 0.01 > l && std::sqrt((i * i + j * j)) - 0.01 < l)
-                double r = 2; 
-                if (i < r && j < r && l < r && i > -r && j > -r && l > -r)
-                {
-                    //std::cout << i << " " << j << "\n";
-                    points.push_back(i);
-                    points.push_back(-l + 2);
-                    points.push_back(j);
-                }
-            }
-        }
+        pushScanerData(0.1, 1, i);
     }
     std::cout << points.size()/3 << "\n";
     glutInit(&argc, argv);
