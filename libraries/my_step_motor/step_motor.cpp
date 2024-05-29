@@ -37,10 +37,10 @@ double Step_motor::ScrollTo(const uint16_t& steps) const
     digitalWrite(PUL, LOW);
     delayMicroseconds(delay_time);
   }
-  return 0.9 * steps * step / 400;
+  return 0.9 * steps * 400 / step;
 }
 
 void Step_motor::ScrollToFullRound() const
 {
-  ScrollTo(400 * step);
+  ScrollTo(step);
 }
