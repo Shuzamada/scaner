@@ -7,7 +7,7 @@
 #include <thread>
 
 
-double RANGE = 90;
+double RANGE = 0;
 
 using namespace boost::asio;
 
@@ -35,6 +35,17 @@ GLfloat angleX = 0.0f;
 GLfloat angleY = 0.0f;
 GLfloat distanceZ = 5.0f;
 
+void init() {
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Черный цвет фона
+
+    glEnable(GL_DEPTH_TEST); // Включаем буфер глубины
+    glEnable(GL_LIGHTING);   // Включаем освещение
+    glEnable(GL_LIGHT0);     // Включаем источник света
+
+    GLfloat lightPos[] = {0.0f, 0.0f, 1.0f, 0.0f}; // Положение света
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+}
+
 void display(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
@@ -43,11 +54,12 @@ void display(void) {
     glRotatef(angleX, 1.0f, 0.0f, 0.0f);
     glRotatef(angleY, 0.0f, 1.0f, 0.0f);
 
-    glPointSize(5.0); // Устанавливаем размер точек
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, points.data());
-    glDrawArrays(GL_POINTS, 0, points.size()/3); // Отображаем все точки объекта
-    glDisableClientState(GL_VERTEX_ARRAY);
+    for (size_t i = 0; i < points.size(); i += 3) {
+        glPushMatrix();
+        glTranslatef(points[i], points[i+1], points[i+2]);
+        glutSolidSphere(0.05f, 20, 20); // Рисуем сферу с радиусом 0.1
+        glPopMatrix();
+    }
 
     glutSwapBuffers();
 }
@@ -67,9 +79,13 @@ void pushScanerData(double h, double r, double degree)
     double z = h;
     double x = r * std::cos(degree * 3.14 / 180);
     double y = r * std::sin(degree * 3.14 / 180);
-    points.push_back(x);
-    points.push_back(z);
-    points.push_back(y);
+    //for (int i = 0; i < 2; i += 2)
+    //{
+        points.push_back(x);
+        //points.push_back(z + i);
+        points.push_back(z);
+        points.push_back(y);
+    //}
 }
 void readSerialData()
 {
@@ -200,6 +216,11 @@ int main(int argc, char **argv)
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutCreateWindow("3D Cube");
+
+
+    init();
+
+
     glEnable(GL_DEPTH_TEST);
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
