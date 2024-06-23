@@ -24,7 +24,7 @@ double getAvarage()
 
 void setup()
 {
-  motor.setStep(12800);
+  motor.setStep(400);
   Serial.begin(9600);
   Wire.begin();
   sensor.setTimeout(500);
@@ -38,15 +38,16 @@ void setup()
  
 void loop()
 {
-  for (int i = 0; i < 800; i+=1)
+  for (int i = 0; i < 400; i+=1)
   {
-    degree += motor.ScrollTo(16);
+    degree += motor.ScrollTo(1);
     Serial.print(0.2);
     Serial.print(" ");
-    Serial.print(getAvarage());
+    //Serial.print(getAvarage());
+    //Serial.print(sensor.readRangeSingleMillimeters());
     Serial.print(" ");
     Serial.println(degree);
   }
   
-  delay(5000);
+  delay(1000);
 }

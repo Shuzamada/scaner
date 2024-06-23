@@ -23,7 +23,7 @@ private:
   uint8_t ENA = 2;
   bool direction = 0;
   uint32_t step = 400;
-  uint16_t delay_time = 50;
+  uint16_t delay_time = 200000000;
 };
 
 #endif
