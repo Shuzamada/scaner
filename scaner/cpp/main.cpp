@@ -7,7 +7,7 @@
 #include <thread>
 
 
-double RANGE = 0;
+double RANGE = 78;
 
 using namespace boost::asio;
 
@@ -75,8 +75,15 @@ void reshape(int w, int h) {
 }
 void pushScanerData(double h, double r, double degree)
 {
-    r =  (RANGE - r)/ 25;
-    double z = h;
+    if (r > RANGE + 111/5)
+    {
+        r = 0;
+    }
+    else
+    {
+        r =  (RANGE - r)/ 20;
+    }
+    double z = h / 20;
     double x = r * std::cos(degree * 3.14 / 180);
     double y = r * std::sin(degree * 3.14 / 180);
     //for (int i = 0; i < 2; i += 2)
