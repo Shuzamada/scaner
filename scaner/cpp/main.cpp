@@ -7,7 +7,7 @@
 #include <thread>
 
 
-double RANGE = 78;
+double RANGE = 130;
 
 using namespace boost::asio;
 
@@ -75,14 +75,15 @@ void reshape(int w, int h) {
 }
 void pushScanerData(double h, double r, double degree)
 {
-    if (r > RANGE + 111/5)
-    {
-        r = 0;
-    }
-    else
-    {
-        r =  (RANGE - r)/ 20;
-    }
+    // if (r > RANGE + 111/5)
+    // {
+    //     r = 0;
+    // }
+    // else
+    // {
+    //     r =  (RANGE - r)/ 20;
+    // }
+    r =  (RANGE - r)/ 20;
     double z = h / 20;
     double x = r * std::cos(degree * 3.14 / 180);
     double y = r * std::sin(degree * 3.14 / 180);
@@ -215,10 +216,14 @@ int main(int argc, char **argv)
     //         }
     //     }
     // }
-    // for (double i = 0; i < 90; i += 0.9)
-    // {
-    //     pushScanerData(0.1, 300, i);
-    // }
+    for (double i = 0; i < 180; i += 0.9)
+    {
+        pushScanerData(0.1, 120, i);
+    }
+    for (double i = 180; i < 360; i += 0.9)
+    {
+        pushScanerData(0.1, 135, i);
+    }
     std::cout << points.size()/3 << "\n";
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);

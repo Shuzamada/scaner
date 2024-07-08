@@ -10,9 +10,9 @@ double getAvarage()
 {
   double res = 0;
   int count = 0;
-  while (count < 1)
+  while (count < 2)
   {
-    double cur = sensor.readRangeSingleMillimeters();
+    double cur = Serial.parseFloat();
     if (cur < 1000)
     {
       res += cur;
@@ -43,8 +43,8 @@ void loop()
     degree += motor.ScrollTo(16);
     Serial.print(0.2);
     Serial.print(" ");
-    //Serial.print(getAvarage());
-    Serial.print(sensor.readRangeSingleMillimeters());
+    Serial.print(getAvarage());
+    //Serial.print(sensor.readRangeSingleMillimeters());
     Serial.print(" ");
     Serial.println(degree);
   }

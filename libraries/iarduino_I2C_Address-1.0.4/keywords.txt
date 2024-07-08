@@ -1,0 +1,27 @@
+#	####################################################
+#	СИНТАКСИЧЕСКАЯ РАСКРАСКА ДЛЯ БИБИЛИОТЕКИ:
+#	iarduino_I2C_Address
+#	####################################################
+#	ТИПЫ ДАННЫХ:							   (KEYWORD1)
+	iarduino_I2C_Address	KEYWORD1
+	iarduino_I2C_SortAddress	KEYWORD1
+#	####################################################
+#	МЕТОДЫ И ФУНКЦИИ:						   (KEYWORD2)
+	begin	KEYWORD2
+	sorting	KEYWORD2
+	changeAddress	KEYWORD2
+	reset	KEYWORD2
+	getAddress	KEYWORD2
+	getVersion	KEYWORD2
+	getModel	KEYWORD2
+	getDevice	KEYWORD2
+	getName	KEYWORD2
+	getPullI2C	KEYWORD2
+	setPullI2C	KEYWORD2
+#	####################################################
+#	КОНСТАНТЫ:								   (LITERAL1)
+	DEVICE_I2C_ABSENT	LITERAL1
+	DEVICE_I2C_DOUBLE	LITERAL1
+	DEVICE_I2C_UNKNOWN	LITERAL1
+	DEVICE_I2C_FLASH	LITERAL1
+	DEVICE_I2C_FLASH_OLD	LITERAL1

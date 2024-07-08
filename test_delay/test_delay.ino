@@ -17,7 +17,7 @@ void setup()
     if (!sensor.init())
     {
       Serial.println("Failed to detect and initialize sensor!");
-      while (1) {}
+      //while (1) {}
     }
     sensor.setMeasurementTimingBudget(200000);
 }
