@@ -40,13 +40,13 @@ void loop()
 {
   for (int i = 0; i < 400; i+=1)
   {
-    degree += motor.ScrollTo(16);
+    degree += motor.ScrollTo(1);
     Serial.print(0.2);
     Serial.print(" ");
     Serial.print(getAvarage());
     //Serial.print(sensor.readRangeSingleMillimeters());
     Serial.print(" ");
-    Serial.println(degree);
+    Serial.println(degree * 16);
   }
   
   delay(1000);
