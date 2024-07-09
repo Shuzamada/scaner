@@ -4,8 +4,8 @@
 
 void setup() {
     Serial.begin(9600);
-    sendCommand("s6-1#");
-    sendCommand("s7-1#");
+    //sendCommand("s6-1#");
+    //sendCommand("s7-1#");
 }
 void sendCommand(String command) {
   Serial.print(command);
