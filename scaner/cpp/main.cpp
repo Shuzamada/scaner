@@ -7,7 +7,7 @@
 #include <thread>
 
 
-double RANGE = 130;
+double RANGE = 81;
 
 using namespace boost::asio;
 
@@ -216,14 +216,14 @@ int main(int argc, char **argv)
     //         }
     //     }
     // }
-    for (double i = 0; i < 180; i += 0.9)
-    {
-        pushScanerData(0.1, 120, i);
-    }
-    for (double i = 180; i < 360; i += 0.9)
-    {
-        pushScanerData(0.1, 135, i);
-    }
+    // for (double i = 0; i < 180; i += 0.9)
+    // {
+    //     pushScanerData(0.1, 120, i);
+    // }
+    // for (double i = 180; i < 360; i += 0.9)
+    // {
+    //     pushScanerData(0.1, 135, i);
+    // } math test
     std::cout << points.size()/3 << "\n";
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
