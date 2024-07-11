@@ -10,7 +10,6 @@ void setup()
     stepper.setMaxSpeed(2000.0);
     stepper.setAcceleration(1000.0);
     Serial.begin(9600);
-    stepper.moveTo(6400*4);
     Serial.begin(9600);
     Wire.begin();
     sensor.setTimeout(500);
@@ -19,7 +18,7 @@ void setup()
       Serial.println("Failed to detect and initialize sensor!");
       //while (1) {}
     }
-    sensor.setMeasurementTimingBudget(200000);
+    sensor.setMeasurementTimingBudget(1000);
 }
 
 void loop()

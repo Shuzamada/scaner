@@ -7,7 +7,7 @@
 #include <thread>
 
 
-double RANGE = 100;
+double RANGE = 78;
 
 using namespace boost::asio;
 

@@ -1,4 +1,7 @@
 #include "step_motor.hpp"
+
+#include <AccelStepper.h>
+
 #include <Wire.h>
 #include <Stepper.h>
 #include <VL53L0X.h>
@@ -8,11 +11,13 @@
 Step_motor motor;
 VL53L0X sensor;
 double degree = 0;
-int lower_h = 85;
+int lower_h = 78;
 int h = lower_h;
 
 const int stepsPerRevolution = 2038;
 Stepper myStepper = Stepper(stepsPerRevolution, 8, 10, 9, 11);
+
+AccelStepper acc_motor;
 
 double getAvarage()
 {
@@ -64,9 +69,25 @@ void liftGoTo(int h)
   }
 }
 
+void spin(int h)
+{
+  for (int i = 0; i < 400; i+=1)
+  {
+    Serial.print(h - lower_h + 0.2);
+    Serial.print(" ");
+    Serial.print(getAvarage());
+    //Serial.print(sensor.readRangeSingleMillimeters());
+    Serial.print(" ");
+    Serial.println(degree * 16);
+    degree += motor.ScrollTo(1);
+  }
+}
+
 void setup()
 {
-  motor.setStep(400*16);
+  acc_motor.setMaxSpeed(200000.0);
+  acc_motor.setAcceleration(10000.0);
+  //motor.setStep(400*16);
   Serial.begin(9600);
   Wire.begin();
   pinMode(MOSFET, OUTPUT);
@@ -84,17 +105,23 @@ void setup()
  
 void loop()
 {
-  delay(100);
-  for (int i = 0; i < 400; i+=1)
+  if (acc_motor.distanceToGo() == 0)
   {
-    degree += motor.ScrollTo(1);
-    Serial.print(h - lower_h + 0.2);
-    Serial.print(" ");
-    Serial.print(getAvarage());
-    //Serial.print(sensor.readRangeSingleMillimeters());
-    Serial.print(" ");
-    Serial.println(degree * 16);
+    acc_motor.setCurrentPosition(0);
+    acc_motor.moveTo(6400*4);
+    h += 2;
+    liftGoTo(h);
   }
-  h += 2;
-  liftGoTo(h);
+  acc_motor.run();
+  if (acc_motor.distanceToGo()% (64) == 0)
+  {
+  degree+=0.9;
+  Serial.print(h - lower_h);
+  Serial.print(" ");
+  Serial.print(getAvarage());
+  //Serial.print(1); 
+  Serial.print(" ");
+  Serial.println(degree); 
+  }
+
 }

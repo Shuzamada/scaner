@@ -38,7 +38,7 @@ void setup()
   // Change these to suit your stepper if you want
   stepper.setMaxSpeed(1000000);
   stepper.setAcceleration(200000);
-  stepper.moveTo(500000);
+  stepper.moveTo(400);
 }
 
 void loop()
@@ -46,6 +46,7 @@ void loop()
     // If at the end of travel go to the other end
     if (stepper.distanceToGo() == 0)
       stepper.moveTo(-stepper.currentPosition());
+      stepper.currentPosition() = 100;
 
     stepper.run();
 }
