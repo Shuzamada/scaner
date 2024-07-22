@@ -116,7 +116,7 @@ void loop()
   if (acc_motor.distanceToGo()% (64) == 0)
   {
   degree+=0.9;
-  Serial.print(h - lower_h);
+  Serial.print((h - lower_h)/2);
   Serial.print(" ");
   Serial.print(getAvarage());
   //Serial.print(1); 
