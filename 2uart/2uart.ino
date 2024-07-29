@@ -7,38 +7,45 @@ NeoSWSerial mySerial2(13, 5); // RX, TX для второго устройств
 void setup() {
   // Инициализация аппаратного UART (Serial) и программных UART портов
   Serial.begin(9600);
-  mySerial1.begin(9600);
+  
+  delay(100);
   mySerial2.begin(9600);
+  delay(100);
+  mySerial1.begin(9600);
 }
-bool first = false;
-bool second = false;
+bool first = true;
+bool second = true;
+String first_data = "";
+String second_data = "";
 void loop() {
 
-  if (mySerial1.available())
+  if (mySerial1.available() && second)
   {
+    //Serial.print(mySerial1.parseInt());
     char c = mySerial1.read();
     Serial.write(c);
+    //first_data = first_data + String(c);
     if (c == '\n')
-    first = true;
-  }
-  if (first)
-  {
-    Serial.println("first");
+    {
     mySerial2.begin(9600);
-    first = false;
+    Serial.print("first ");
+    //first_data = "";
+    first = true;
+    second = false;
+    }
   }
-
-  if (mySerial2.available())
+  if (mySerial2.available() && first)
   { 
     char c = mySerial2.read();
     Serial.write(c);
+    second_data = second_data + String(c);
     if (c == '\n')
-    second = true;
-  }
-  if (second)
-  {
-    Serial.println("second");
+    {
     mySerial1.begin(9600);
-    second = false;
+    Serial.print("second ");
+    //second_data = "second ";
+    second = true;
+    first = false;
+    }
   }
 }
