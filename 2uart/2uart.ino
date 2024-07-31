@@ -1,4 +1,5 @@
 #include <NeoSWSerial.h>
+#include "SensorGrid3.hpp"
 
 // Определение программных UART портов
 NeoSWSerial mySerial1(5, 13); // RX, TX для первого устройства
