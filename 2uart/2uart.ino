@@ -24,9 +24,11 @@ void loop() {
   if (mySerial1.available() && third)
   {
     char c = mySerial1.read();
+    if (c != '\n')
     first_data = first_data + String(c);
     if (c == '\n')
     {
+    first_data = first_data+ String(' '); 
     mySerial2.begin(9600);
     Serial.print("first " + first_data);
     first_data = "";
@@ -37,10 +39,11 @@ void loop() {
   if (mySerial2.available() && first)
   { 
     char c = mySerial2.read();
-    //Serial.write(c);
+    if (c != '\n')
     second_data = second_data + String(c);
     if (c == '\n')
     {
+    second_data = second_data+ String(' '); 
     mySerial3.begin(9600);
     Serial.print(second_data);
     second_data = "second ";
@@ -51,10 +54,11 @@ void loop() {
   if (mySerial3.available() && second)
   { 
     char c = mySerial3.read();
-    //Serial.write(c);
+    if (c != '\n')
     third_data = third_data + String(c);
     if (c == '\n')
     {
+    third_data = third_data + String('\n'); 
     mySerial1.begin(9600);
     Serial.print(third_data);
     third_data = "third ";
