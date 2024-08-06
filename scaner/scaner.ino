@@ -6,7 +6,16 @@
 #include <Stepper.h>
 #include <VL53L0X.h>
 
+#include "SensorGrid3.hpp"
+
 #define MOSFET 12
+
+
+
+SensorGrid3 sensor_grid(5, 13,
+                        6, 13,
+                        7, 13);
+
 
 Step_motor motor;
 VL53L0X sensor;
@@ -85,6 +94,7 @@ void spin(int h)
 
 void setup()
 {
+  sensor_grid.begin(9600);
   acc_motor.setMaxSpeed(200000.0);
   acc_motor.setAcceleration(10000.0);
   //motor.setStep(400*16);
@@ -118,8 +128,11 @@ void loop()
   degree+=0.9;
   Serial.print((h - lower_h)/2);
   Serial.print(" ");
-  Serial.print(getAvarage());
-  //Serial.print(1); 
+  Serial.print(sensor_grid.readFirst());
+  Serial.print(" ");
+  Serial.print(sensor_grid.readSecond());
+  Serial.print(" ");
+  Serial.print(sensor_grid.readThird());
   Serial.print(" ");
   Serial.println(degree); 
   }

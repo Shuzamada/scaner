@@ -7,30 +7,16 @@
 #include <thread>
 
 
-double RANGE = 70;
-
+const double RANGE = 113;
+const double SCALE_K = 20;
+const double SENSOR_RANGE = 10 / SCALE_K;
 using namespace boost::asio;
 
 io_service io;
 
 serial_port serial(io, "/dev/ttyACM0");
 
-// Координаты вершин куба
-std::vector<GLfloat> points = {
-    // -1.0, -1.0, -1.0,
-    // 1.0, -1.0, -1.0,
-    // 1.0, 1.0, -1.0,
-    // -1.0, 1.0, -1.0,
-    // -1.0, -1.0, 1.0,
-    // 1.0, -1.0, 1.0,
-    // 1.0, 1.0, 1.0,
-    // -1.0, 1.0, 1.0
-
-    // 0.0, 0.0, 2.0,
-    // -2.0, -2.0, -2.0,
-    // 2.0, 2.0, 2.0,
-
-};
+std::vector<GLfloat> points = {};
 GLfloat angleX = 0.0f;
 GLfloat angleY = 0.0f;
 GLfloat distanceZ = 5.0f;
@@ -57,7 +43,7 @@ void display(void) {
     for (size_t i = 0; i < points.size(); i += 3) {
         glPushMatrix();
         glTranslatef(points[i], points[i+1], points[i+2]);
-        glutSolidSphere(0.05f, 20, 20); // Рисуем сферу с радиусом 0.1
+        glutSolidSphere(0.05f, 20, 20); // Рисуем сферу с радиусом 0.5
         glPopMatrix();
     }
 
@@ -73,27 +59,29 @@ void reshape(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
-void pushScanerData(double h, double r, double degree)
+void pushScanerData(double h, double r1, double r2, double r3, double degree)
 {
-    // if (r > RANGE + 111/5)
-    // {
-    //     r = 0;
-    // }
-    // else
-    // {
-    //     r =  (RANGE - r)/ 20;
-    // }
-    r =  (RANGE - r)/ 20;
-    double z = h / 20;
-    double x = r * std::cos(degree * 3.14 / 180);
-    double y = r * std::sin(degree * 3.14 / 180);
-    //for (int i = 0; i < 2; i += 2)
-    //{
-        points.push_back(x);
-        //points.push_back(z + i);
-        points.push_back(z);
-        points.push_back(y);
-    //}
+    r1 =  (RANGE - r1)/ 20;
+    double z1 = h / 20;
+    double x1 = r1 * std::cos(degree * 3.14 / 180) - SENSOR_RANGE;
+    double y1 = r1 * std::sin(degree * 3.14 / 180);
+    points.push_back(x1);
+    points.push_back(z1);
+    points.push_back(y1);
+    r2 =  (RANGE - r2)/ 20;
+    double z2 = h / 20;
+    double x2 = r2 * std::cos(degree * 3.14 / 180);
+    double y2 = r2 * std::sin(degree * 3.14 / 180);
+    points.push_back(x2);
+    points.push_back(z2);
+    points.push_back(y2);
+    r3 =  (RANGE - r3)/ 20;
+    double z3 = h / 20;
+    double x3 = r3 * std::cos(degree * 3.14 / 180) + SENSOR_RANGE;
+    double y3 = r3 * std::sin(degree * 3.14 / 180);
+    points.push_back(x3);
+    points.push_back(z3);
+    points.push_back(y3);
 }
 void readSerialData()
 {
@@ -121,10 +109,10 @@ void readSerialData()
             std::cout << "Получено: " << line << "\n";
 
             std::stringstream ss(line);
-            double h, r, dergee;
-            if (ss >> h >> r >> dergee)
+            double h, r1, r2, r3, dergee;
+            if (ss >> h >> r1 >> r2 >> r3 >> dergee)
             {
-                pushScanerData(h, r, dergee);
+                pushScanerData(h, r1, r2, r3, dergee);
                 glutPostRedisplay();
             }
             else
@@ -171,8 +159,6 @@ void keyboard(unsigned char key, int x, int y) {
 
 int main(int argc, char **argv)
 {
-
-
     // Настройка параметров порта
     serial.set_option(serial_port_base::baud_rate(9600));
     serial.set_option(serial_port_base::character_size(8));
@@ -181,7 +167,6 @@ int main(int argc, char **argv)
     serial.set_option(serial_port_base::flow_control(serial_port_base::flow_control::none));
 
 
-
     points.push_back(0);
     points.push_back(0);
     points.push_back(0);
@@ -198,32 +183,6 @@ int main(int argc, char **argv)
     points.push_back(0);
     points.push_back(1);
 
-    // for (double i = -2; i < 2; i+=0.05)
-    // {
-    //     for (double j = -2; j < 2; j+=0.05)
-    //     {
-    //         for (double l = 0; l < 2; l+=0.05)
-    //         {
-    //             //if (std::sqrt((i * i + j * j)) + 0.01 > l && std::sqrt((i * i + j * j)) - 0.01 < l)
-    //             double r = 2; 
-    //             if (i < r && j < r && l < r && i > -r && j > -r && l > -r)
-    //             {
-    //                 //std::cout << i << " " << j << "\n";
-    //                 points.push_back(i);
-    //                 points.push_back(-l + 2);
-    //                 points.push_back(j);
-    //             }
-    //         }
-    //     }
-    // }
-    // for (double i = 0; i < 180; i += 0.9)
-    // {
-    //     pushScanerData(0.1, 120, i);
-    // }
-    // for (double i = 180; i < 360; i += 0.9)
-    // {
-    //     pushScanerData(0.1, 135, i);
-    // } math test
     std::cout << points.size()/3 << "\n";
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
