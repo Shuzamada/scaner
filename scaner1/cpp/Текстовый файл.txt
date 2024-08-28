@@ -1,0 +1,1 @@
+g++ -std=c++11 -o serial_opengl main.cpp -lGL -lGLU -lglut -lboost_system -lpthread
