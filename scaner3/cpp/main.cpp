@@ -1,17 +1,19 @@
 #include <GL/glut.h>
 #include <iostream>
+#include <fstream>
 #include <cmath>
 #include <vector>
 #include <boost/asio.hpp>
 #include <sstream>
 #include <thread>
+#include <ctime>
+#include <iomanip>
 
-
-const double RANGE = 113;
+const double RANGE = 68;
 const double SCALE_K = 20;
-const double SENSOR_RANGE = 10 / SCALE_K;
-using namespace boost::asio;
+const double SENSOR_RANGE = 10;
 
+using namespace boost::asio;
 io_service io;
 
 serial_port serial(io, "/dev/ttyACM0");
@@ -20,6 +22,17 @@ std::vector<GLfloat> points = {};
 GLfloat angleX = 0.0f;
 GLfloat angleY = 0.0f;
 GLfloat distanceZ = 5.0f;
+
+std::string getCurrentDateTime()
+{
+    std::time_t t = std::time(nullptr);
+    std::tm* now = std::localtime(&t);
+
+    std::ostringstream oss;
+    oss << std::put_time(now, "%Y%m%d%H%M%S");
+
+    return oss.str() + ".txt";
+}
 
 void init() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Черный цвет фона
@@ -50,7 +63,6 @@ void display(void) {
     glutSwapBuffers();
 }
 
-
 void reshape(int w, int h) {
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
@@ -59,7 +71,8 @@ void reshape(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
-void pushScanerData(double h, double r1, double r2, double r3, double degree)
+
+void pushScanerData(double h, double r1, double r2, double r3, double degree, std::ofstream &out)
 {
     r1 =  (RANGE - r1)/ 20;
     double z1 = h / 20;
@@ -68,6 +81,9 @@ void pushScanerData(double h, double r1, double r2, double r3, double degree)
     points.push_back(x1);
     points.push_back(z1);
     points.push_back(y1);
+    
+    out << x1 << " " << z1 << " " << y1 << "\n";
+
     r2 =  (RANGE - r2)/ 20;
     double z2 = h / 20;
     double x2 = r2 * std::cos(degree * 3.14 / 180);
@@ -75,6 +91,10 @@ void pushScanerData(double h, double r1, double r2, double r3, double degree)
     points.push_back(x2);
     points.push_back(z2);
     points.push_back(y2);
+    
+    // Запись в файл
+    out << x2 << " " << z2 << " " << y2 << "\n";
+    
     r3 =  (RANGE - r3)/ 20;
     double z3 = h / 20;
     double x3 = r3 * std::cos(degree * 3.14 / 180) + SENSOR_RANGE;
@@ -82,8 +102,11 @@ void pushScanerData(double h, double r1, double r2, double r3, double degree)
     points.push_back(x3);
     points.push_back(z3);
     points.push_back(y3);
+
+    out << x3 << " " << z3 << " " << y3 << "\n";
 }
-void readSerialData()
+
+void readSerialData(std::ofstream &out)
 {
     std::string buffer;
     char buf[512];
@@ -109,10 +132,10 @@ void readSerialData()
             std::cout << "Получено: " << line << "\n";
 
             std::stringstream ss(line);
-            double h, r1, r2, r3, dergee;
-            if (ss >> h >> r1 >> r2 >> r3 >> dergee)
+            double h, r1, r2, r3, degree;
+            if (ss >> h >> r1 >> r2 >> r3 >> degree)
             {
-                pushScanerData(h, r1, r2, r3, dergee);
+                pushScanerData(h, r1, r2, r3, degree, out);
                 glutPostRedisplay();
             }
             else
@@ -122,6 +145,7 @@ void readSerialData()
         }
     }
 }
+
 void keyboard(unsigned char key, int x, int y) {
     double x_p = 0.0;
     double y_p = 0.0;
@@ -156,16 +180,23 @@ void keyboard(unsigned char key, int x, int y) {
     glutPostRedisplay();
 }
 
-
 int main(int argc, char **argv)
 {
+    std::string filename = getCurrentDateTime();
+    std::ofstream out(filename);  // Открываем файл для записи
+
+    if (!out.is_open())
+    {
+        std::cerr << "Не удалось открыть файл для записи!\n";
+        return 1;
+    }
+
     // Настройка параметров порта
     serial.set_option(serial_port_base::baud_rate(9600));
     serial.set_option(serial_port_base::character_size(8));
     serial.set_option(serial_port_base::parity(serial_port_base::parity::none));
     serial.set_option(serial_port_base::stop_bits(serial_port_base::stop_bits::one));
     serial.set_option(serial_port_base::flow_control(serial_port_base::flow_control::none));
-
 
     points.push_back(0);
     points.push_back(0);
@@ -188,16 +219,16 @@ int main(int argc, char **argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutCreateWindow("3D Cube");
 
-
     init();
-
 
     glEnable(GL_DEPTH_TEST);
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
-        std::thread serialThread(readSerialData);
+    std::thread serialThread(readSerialData, std::ref(out));
     glutKeyboardFunc(keyboard);
     glutMainLoop();
     serialThread.join();
+
+    out.close();  // Закрываем файл
     return 0;
 }

@@ -11,5 +11,10 @@ void setup()
 }
 void loop()
 {
-  Serial.println(sensor_grid.readFirst());
+  Serial.print("first:");
+  Serial.print(sensor_grid.readFirst());
+  Serial.print("  second:");
+  Serial.print(sensor_grid.readSecond());
+  Serial.print("  third:");
+  Serial.println(sensor_grid.readThird());
 }

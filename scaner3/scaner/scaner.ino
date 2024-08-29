@@ -10,8 +10,6 @@
 
 #define MOSFET 12
 
-
-
 SensorGrid3 sensor_grid(5, 13,
                         6, 13,
                         7, 13);
@@ -94,7 +92,6 @@ void spin(int h)
 
 void setup()
 {
-  sensor_grid.begin(9600);
   acc_motor.setMaxSpeed(200000.0);
   acc_motor.setAcceleration(10000.0);
   //motor.setStep(400*16);
@@ -110,6 +107,7 @@ void setup()
     while (1) {}
   }
   sensor.setMeasurementTimingBudget(50000);
+  sensor_grid.begin(9600);
   liftGoTo(h);
 }
  

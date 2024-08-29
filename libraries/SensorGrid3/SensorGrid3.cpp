@@ -48,3 +48,58 @@ uint16_t SensorGrid3::readFirst()
     }
   }
 }
+
+uint16_t SensorGrid3::readSecond()
+{
+  mySerial2.begin(baudRate_);
+  String str_data = "";
+  uint16_t int_data = 0;
+  while (true)
+  {
+    if (mySerial2.available())
+    {
+      char c = mySerial2.read();
+      if (c != '\n')
+      {
+        str_data = str_data + String(c);
+      }
+      if (c == '\n')
+      {
+        int_data = str_data.toInt();
+        if (int_data != 0)
+        {
+          return int_data;
+        }
+        int_data = 0;
+        str_data = "";
+      }
+    }
+  }
+}
+uint16_t SensorGrid3::readThird()
+{
+  mySerial3.begin(baudRate_);
+  String str_data = "";
+  uint16_t int_data = 0;
+  while (true)
+  {
+    if (mySerial3.available())
+    {
+      char c = mySerial3.read();
+      if (c != '\n')
+      {
+        str_data = str_data + String(c);
+      }
+      if (c == '\n')
+      {
+        int_data = str_data.toInt();
+        if (int_data != 0)
+        {
+          return int_data;
+        }
+        int_data = 0;
+        str_data = "";
+      }
+    }
+  }
+}

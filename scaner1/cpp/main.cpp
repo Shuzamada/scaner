@@ -9,7 +9,7 @@
 #include <ctime>
 #include <iomanip>
 
-const double RANGE = 68;
+const double RANGE = 65;
 const double SCALE_K = 20;
 const double SENSOR_RANGE = 10;
 
@@ -76,13 +76,13 @@ void pushScanerData(double h, double r, double degree, std::ofstream &out)
 {
     r =  (RANGE - r)/ 20;
     double z = h / 20;
-    double x = r * std::cos(degree * 3.14 / 180) - SENSOR_RANGE;
+    double x = r * std::cos(degree * 3.14 / 180);
     double y = r * std::sin(degree * 3.14 / 180);
     points.push_back(x);
     points.push_back(z);
     points.push_back(y);
     
-    out << x << " " << z << " " << y << "\n";
+    out << x*20 << " " << y*20 << " " << z*20 << "\n";
 }
 
 void readSerialData(std::ofstream &out)

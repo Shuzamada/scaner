@@ -1,19 +1,31 @@
 #include "step_motor.hpp"
+
 #include <AccelStepper.h>
+
 #include <Wire.h>
 #include <Stepper.h>
 #include <VL53L0X.h>
 
+#include "SensorGrid3.hpp"
+
 #define MOSFET 12
+
+SensorGrid3 sensor_grid(5, 13,
+                        6, 13,
+                        7, 13);
+
 
 Step_motor motor;
 VL53L0X sensor;
 double degree = 0;
 int lower_h = 78;
 int h = lower_h;
+
 const int stepsPerRevolution = 2038;
 Stepper myStepper = Stepper(stepsPerRevolution, 8, 10, 9, 11);
+
 AccelStepper acc_motor;
+
 double getAvarage()
 {
   double res = 0;
@@ -33,6 +45,7 @@ double getAvarage()
   }
   return res / count;
 }
+
 void liftGoTo(int h)
 {
   int count = 0;
@@ -62,6 +75,7 @@ void liftGoTo(int h)
     digitalWrite(MOSFET, LOW);
   }
 }
+
 void spin(int h)
 {
   for (int i = 0; i < 400; i+=1)
@@ -81,11 +95,19 @@ void setup()
   acc_motor.setMaxSpeed(200000.0);
   acc_motor.setAcceleration(10000.0);
   //motor.setStep(400*16);
+  Serial.begin(9600);
+  Wire.begin();
+  pinMode(MOSFET, OUTPUT);
+  digitalWrite(MOSFET, LOW);
+  myStepper.setSpeed(20);
+  sensor.setTimeout(500);
+  if (!sensor.init())
   {
     Serial.println("Failed to detect and initialize sensor!");
     while (1) {}
   }
   sensor.setMeasurementTimingBudget(50000);
+  sensor_grid.begin(9600);
   liftGoTo(h);
 }
  
@@ -95,18 +117,22 @@ void loop()
   {
     acc_motor.setCurrentPosition(0);
     acc_motor.moveTo(6400*4);
-    h += 2;
+    h++;
     liftGoTo(h);
   }
   acc_motor.run();
   if (acc_motor.distanceToGo()% (64) == 0)
   {
   degree+=0.9;
-  Serial.print((h - lower_h)/2);
+  Serial.print((h - lower_h));
   Serial.print(" ");
-  Serial.print(getAvarage());
-  //Serial.print(1); 
+  //Serial.print(sensor_grid.readFirst());
+  //Serial.print(" ");
+  Serial.print(sensor_grid.readSecond());
   Serial.print(" ");
+  //Serial.print(sensor_grid.readThird());
+  //Serial.print(" ");
   Serial.println(degree); 
   }
+
 }
